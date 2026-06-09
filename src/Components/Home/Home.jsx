@@ -1,32 +1,32 @@
-import HomeCss from "./Home.module.css";
 import axios from "axios";
+import { useContext, useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
+import toast from "react-hot-toast";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import { cartAuthContext } from "../../Context/CartAuthProvider/CartAuthProvider";
 import Slider from "react-slick";
-import { Helmet } from "react-helmet";
+import { cartAuthContext } from "../../Context/CartAuthProvider/CartAuthProvider";
 import Loader from "../Loader/Loader";
-import toast from "react-hot-toast";
+import HomeCss from "./Home.module.css";
 export default function Home() {
-  const { addToCart,addToWishlist,deleteProduct,productWishIds } =
+  const { addToCart, addToWishlist, deleteProduct, productWishIds } =
     useContext(cartAuthContext);
 
-  function addToWish (id){
-    toast.promise( addToWishlist(id), {
+  function addToWish(id) {
+    toast.promise(addToWishlist(id), {
       loading: 'Loading',
       success: 'Product added to WishList successfully',
       error: 'Error in add Product try again ',
-      });
+    });
   }
 
-    function deleteFromWish(id) {
-    toast.promise( deleteProduct(id), {
+  function deleteFromWish(id) {
+    toast.promise(deleteProduct(id), {
       loading: 'Loading',
       success: 'Product Deleted From WishList successfully',
       error: 'Error in Delete Product try again ',
-      });
-    }
+    });
+  }
 
   async function addMyProduct(productId) {
     const result = await addToCart(productId);
@@ -50,26 +50,37 @@ export default function Home() {
 
   const product = data?.data.data;
 
-  const[searchValue,setSearchValue]=useState("")
+  const [searchValue, setSearchValue] = useState("")
   const [productList, setProductList] = useState("")
+  // const displayProducts = productList || product;
+
   useEffect(() => {
-      setProductList(product?.filter(elem => elem.title.toLowerCase().includes(searchValue.toLowerCase())))
-    }, [searchValue])
+    setProductList(product?.filter(elem => elem.title.toLowerCase().includes(searchValue.toLowerCase())))
+  }, [searchValue, product])
 
   // loading spinner
-    if (isLoading) {
-      return <Loader />;
-    }
+  if (isLoading || categoryQuery.isLoading) {
+    return <Loader />;
+  }
 
   if (isError) {
-      return (
-        <>
-          <div className="d-flex justify-content-center align-content-center fw-bolder">
-            <h3 className="h1">{error}</h3>
-          </div>
-        </>
-      );
-    }
+    return (
+      <>
+        <div className="d-flex justify-content-center align-content-center fw-bolder">
+          <h3 className="h1">{error}</h3>
+        </div>
+      </>
+    );
+  }
+  if (categoryQuery.isError) {
+    return (
+      <>
+        <div className="d-flex justify-content-center align-content-center fw-bolder">
+          <h3 className="h1">{categoryQuery.error}</h3>
+        </div>
+      </>
+    );
+  }
   async function getAllProduct() {
     return await axios.get(`https://ecommerce.routemisr.com/api/v1/products`);
   }
@@ -158,7 +169,7 @@ export default function Home() {
                         <img
                           className="w-100 h-100"
                           src={img}
-                          alt={product.title}
+                          alt={pro.title}
                         />
                       </div>
                     </Link>
@@ -204,11 +215,11 @@ export default function Home() {
           </Slider>
         </div>
         <input type="text" className="form-control my-5 w-75 m-auto" placeholder="search ..."
-        onChange={(e)=>setSearchValue(e.target.value)}
+          onChange={(e) => setSearchValue(e.target.value)}
         />
         <div className="row g-4">
           {/* {product?.map((product, index) => ( */}
-          {productList?productList.map((product, index) => (
+          {productList ? productList.map((product, index) => (
             <div key={index} className="col-xl-3 col-lg-4 col-md-6">
               <div className="product position-relative">
                 <Link to={`/productDetails/${product.id}`}>
@@ -256,7 +267,7 @@ export default function Home() {
                   >
                     Add To Cart
                   </button>
-                  
+
                   {productWishIds.includes(product.id) ?
                     <button className="rounded-2  bg-success text-danger fs-5 " onClick={() => deleteFromWish(product.id)}><i className="fa-solid fa-heart"></i></button>
                     : <button className=" rounded-2 bg-success  fs-5" onClick={() => addToWish(product.id)} ><i className="fa-solid fa-heart"></i></button>}
@@ -266,62 +277,62 @@ export default function Home() {
           ))
             :
             <>
-          {product?.map((product, index) => (
-            <div key={index} className="col-xl-3 col-lg-4 col-md-6">
-              <div className="product position-relative">
-                <Link to={`/productDetails/${product.id}`}>
-                  <img
-                    className="w-100"
-                    src={product.imageCover}
-                    alt={product.title}
-                  />
-                  {product.priceAfterDiscount ? (
-                    <div className="sale">Sale</div>
-                  ) : (
-                    ""
-                  )}
-                  <h3 className="h6 text-success fw-bold">
-                    {product.category.name}
-                  </h3>
-                  <h2 className="h5 fw-bold text-center">
-                    {product.title.split(" ").splice(0, 2).join(" ")}
-                  </h2>
-                  <div className="d-flex justify-content-between">
-                    {product.priceAfterDiscount ? (
-                      <p>
-                        <span className="text-decoration-line-through">
-                          {product.price}
-                        </span>
-                        /{product.priceAfterDiscount} Egp
-                      </p>
-                    ) : (
-                      <p>{product.price} Egp</p>
-                    )}
-                    <p>
-                      <span className="text-warning">
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                      {product.ratingsAverage}
-                    </p>
+              {product?.map((product, index) => (
+                <div key={index} className="col-xl-3 col-lg-4 col-md-6">
+                  <div className="product position-relative">
+                    <Link to={`/productDetails/${product.id}`}>
+                      <img
+                        className="w-100"
+                        src={product.imageCover}
+                        alt={product.title}
+                      />
+                      {product.priceAfterDiscount ? (
+                        <div className="sale">Sale</div>
+                      ) : (
+                        ""
+                      )}
+                      <h3 className="h6 text-success fw-bold">
+                        {product.category.name}
+                      </h3>
+                      <h2 className="h5 fw-bold text-center">
+                        {product.title.split(" ").splice(0, 2).join(" ")}
+                      </h2>
+                      <div className="d-flex justify-content-between">
+                        {product.priceAfterDiscount ? (
+                          <p>
+                            <span className="text-decoration-line-through">
+                              {product.price}
+                            </span>
+                            /{product.priceAfterDiscount} Egp
+                          </p>
+                        ) : (
+                          <p>{product.price} Egp</p>
+                        )}
+                        <p>
+                          <span className="text-warning">
+                            <i className="fa-solid fa-star"></i>
+                          </span>
+                          {product.ratingsAverage}
+                        </p>
+                      </div>
+                    </Link>
+                    <div className="d-flex justify-content-between fa-2x">
+                      <button
+                        onClick={function () {
+                          addMyProduct(product.id);
+                        }}
+                        className="btn btn-success"
+                      >
+                        Add To Cart
+                      </button>
+
+                      {productWishIds.includes(product.id) ?
+                        <button className="rounded-2  bg-success text-danger fs-5 " onClick={() => deleteFromWish(product.id)}><i className="fa-solid fa-heart"></i></button>
+                        : <button className=" rounded-2 bg-success  fs-5" onClick={() => addToWish(product.id)} ><i className="fa-solid fa-heart"></i></button>}
+                    </div>
                   </div>
-                </Link>
-                <div className="d-flex justify-content-between fa-2x">
-                  <button
-                    onClick={function () {
-                      addMyProduct(product.id);
-                    }}
-                    className="btn btn-success"
-                  >
-                    Add To Cart
-                  </button>
-                  
-                  {productWishIds.includes(product.id) ?
-                    <button className="rounded-2  bg-success text-danger fs-5 " onClick={() => deleteFromWish(product.id)}><i className="fa-solid fa-heart"></i></button>
-                    : <button className=" rounded-2 bg-success  fs-5" onClick={() => addToWish(product.id)} ><i className="fa-solid fa-heart"></i></button>}
                 </div>
-              </div>
-            </div>
-          )) }
+              ))}
             </>
           }
         </div>
