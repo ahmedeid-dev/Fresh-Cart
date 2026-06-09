@@ -1,11 +1,11 @@
 import axios from "axios";
 import { useFormik } from "formik";
-import { object, string } from "yup";
-import { cartAuthContext } from "../../Context/CartAuthProvider/CartAuthProvider";
 import { useContext } from "react";
+import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { object, string } from "yup";
+import { cartAuthContext } from "../../Context/CartAuthProvider/CartAuthProvider";
 
 export default function CheckOut() {
 
@@ -80,15 +80,15 @@ export default function CheckOut() {
     initialValues: initialValues,
     onSubmit: (values) => {
       if (values.isSecondButton) {
-        createCashOrder();
+        createCashOrder(values.details, values.phone, values.city);
       } else {
-        confirmOnlinePayment();
+        confirmOnlinePayment(values.details, values.phone, values.city);
       }
     },
     validationSchema: userSchema,
   });
 
-  async function confirmOnlinePayment( details,phone,city) {
+  async function confirmOnlinePayment(details, phone, city) {
     const chippingAddress = {
       "shippingAddress": {
         details,
@@ -102,6 +102,7 @@ export default function CheckOut() {
         { chippingAddress },
         {
           params: {
+            // url: process.env.REACT_APP_BASE_URL || window.location.origin
             url: `https://fresh-cart-olive.vercel.app/`
           },
           headers: {
@@ -128,11 +129,11 @@ export default function CheckOut() {
 
   return (
     <>
-          <Helmet>
-    <meta charSet="utf-8" />
-    <title>Check Out</title>
-    {/* <link rel="canonical" href="http://mysite.com/example" /> */}
-  </Helmet>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Check Out</title>
+        {/* <link rel="canonical" href="http://mysite.com/example" /> */}
+      </Helmet>
       <div className="container py-5">
         <form onSubmit={formik.handleSubmit} className="pay">
           <label className="fw-bold" htmlFor="phone">
@@ -196,17 +197,22 @@ export default function CheckOut() {
             ""
           )}
 
-          <button className="btn w-100 my-3 btn-outline-danger" type="submit">
+          <button
+            onClick={() => { formik.values.isSecondButton = false; }}
+            className="btn w-100 my-3 btn-outline-danger" type="submit">
             Complete Cash Payment
           </button>
           <button
             type="submit"
-          onClick={() => confirmOnlinePayment}
-          className="btn w-100 my-3 btn-outline-primary online"
+            onClick={() => {
+              formik.values.isSecondButton = true;
+              confirmOnlinePayment(formik.values.details, formik.values.phone, formik.values.city)
+            }}
+            className="btn w-100 my-3 btn-outline-primary online"
           >
-          Complete Online Payment
-        </button>
-          </form>
+            Complete Online Payment
+          </button>
+        </form>
       </div>
     </>
   );
