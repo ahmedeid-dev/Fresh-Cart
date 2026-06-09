@@ -1,21 +1,21 @@
-import LoginCss from "./Login.module.css";
-import { object, string } from "yup";
-import { useFormik } from "formik";
 import axios from "axios";
-import React, { useContext, useState } from "react";
+import { useFormik } from "formik";
+import { useContext, useState } from "react";
+import { Helmet } from "react-helmet";
 import { RotatingLines } from "react-loader-spinner";
 import { Link, useNavigate } from "react-router-dom";
-import { authContext } from "../../Context/LoggedAuthProvider/LoggedAuthProvider";
-import { Helmet } from "react-helmet";
+import { object, string } from "yup";
 import { cartAuthContext } from "../../Context/CartAuthProvider/CartAuthProvider";
+import { authContext } from "../../Context/LoggedAuthProvider/LoggedAuthProvider";
+import LoginCss from "./Login.module.css";
 
 export default function Login() {
 
-  const [isSeccess, setIsSeccess] = useState(null);
-  const [errorMeaasge, setErrorMeaasge] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
   const navigate = useNavigate();
-  const { setToken,name } = useContext(authContext);
+  const { setToken, name } = useContext(authContext);
   const { getProductDetails, getLoggedUserWishlist } =
     useContext(cartAuthContext);
 
@@ -28,22 +28,22 @@ export default function Login() {
       );
 
       // console.log("in case of success ", response?.data);
-      setIsSeccess(true);
+      setIsSuccess(true);
       localStorage.setItem("token", response.data.token);
       setToken(response.data.token);
       // console.log(response.data.token);
       getProductDetails();
       getLoggedUserWishlist();
       setTimeout(() => {
-        setIsSeccess(false);
+        setIsSuccess(false);
         navigate("/home");
       }, 2000);
       setIsLoading(false);
     } catch (error) {
       // console.log("in case of errors ", error?.response.data.message);
-      setErrorMeaasge(error?.response.data.message);
+      setErrorMessage(error?.response.data.message);
       setTimeout(() => {
-        setErrorMeaasge(false);
+        setErrorMessage(false);
       }, 2000);
       setIsLoading(false);
     }
@@ -78,97 +78,97 @@ export default function Login() {
 
   return (
     <>
-          <Helmet>
-    <meta charSet="utf-8" />
-    <title>Login</title>
-    {/* <link rel="canonical" href="http://mysite.com/example" /> */}
-  </Helmet>
-        <div className="w-75 m-auto py-5">
-          <h2>Login Now : </h2>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Login</title>
+        {/* <link rel="canonical" href="http://mysite.com/example" /> */}
+      </Helmet>
+      <div className="w-75 m-auto py-5">
+        <h2>Login Now : </h2>
 
-          {isSeccess ? (
-            <div className="alert alert-success text-center fw-bold h4">
-              Welcome Back {name}
+        {isSuccess ? (
+          <div className="alert alert-success text-center fw-bold h4">
+            Welcome Back {name}
+          </div>
+        ) : (
+          ""
+        )}
+        {errorMessage ? (
+          <div className="alert alert-danger text-center fw-bold h4">
+            {errorMessage}
+          </div>
+        ) : (
+          ""
+        )}
+
+        <form
+          onSubmit={loginFormik.handleSubmit}
+          className="d-flex flex-column"
+        >
+          <label htmlFor="email">email :</label>
+          <input
+            className="my-2 form-control "
+            value={loginFormik.values.email}
+            onInput={loginFormik.handleBlur}
+            onChange={loginFormik.handleChange}
+            id="email"
+            type="email"
+            placeholder="Enter Your Email ..."
+          />
+          {loginFormik.errors.email && loginFormik.touched.email ? (
+            <div className="alert alert-danger w-100">
+              {loginFormik.errors.email}
             </div>
           ) : (
             ""
           )}
-          {errorMeaasge ? (
-            <div className="alert alert-danger text-center fw-bold h4">
-              {errorMeaasge}
-            </div>
-          ) : (
-            ""
-          )}
 
-          <form
-            onSubmit={loginFormik.handleSubmit}
-            className="d-flex flex-column"
-          >
-            <label htmlFor="email">email :</label>
+          <label htmlFor="password">password :</label>
+          <div className="position-relative w-100 h-25">
             <input
-              className="my-2 form-control "
-              value={loginFormik.values.email}
+              className="my-2 form-control passwordInput"
+              value={loginFormik.values.password}
               onInput={loginFormik.handleBlur}
               onChange={loginFormik.handleChange}
-              id="email"
-              type="email"
-              placeholder="Enter Your Email ..."
+              id="password"
+              type="password"
+              placeholder="Enter Your Password ..."
             />
-            {loginFormik.errors.email && loginFormik.touched.email ? (
-              <div className="alert alert-danger w-100">
-                {loginFormik.errors.email}
-              </div>
-            ) : (
-              ""
-            )}
-
-            <label htmlFor="password">password :</label>
-            <div className="position-relative w-100 h-25">
-              <input
-                className="my-2 form-control passwordInput"
-                value={loginFormik.values.password}
-                onInput={loginFormik.handleBlur}
-                onChange={loginFormik.handleChange}
-                id="password"
-                type="password"
-                placeholder="Enter Your Password ..."
-              />
+          </div>
+          {loginFormik.errors.password && loginFormik.touched.password ? (
+            <div className="alert alert-danger w-100">
+              {loginFormik.errors.password}
             </div>
-            {loginFormik.errors.password && loginFormik.touched.password ? (
-              <div className="alert alert-danger w-100">
-                {loginFormik.errors.password}
-              </div>
-            ) : (
-              ""
-            )}
-            <div className="forget d-flex  justify-content-between my-3">
-              <button className="btn btn-success py-2 px-4" type="submit">
-                {isLoading ? (
-                  <RotatingLines
-                    visible={true}
-                    height="66"
-                    width="66"
-                    strokeColor="white"
-                    color="grey"
-                    strokeWidth="3"
-                    animationDuration="0.75"
-                    ariaLabel="rotating-lines-loading"
-                    wrapperStyle={{}}
-                    wrapperClass=""
-                  />
-                ) : (
-                  "Login"
-                )}
-              </button>
-              <Link className={LoginCss.reset} to="/forget">
-                Forget Password
-              </Link>
-            </div>
-          </form>
-        </div>
+          ) : (
+            ""
+          )}
+          <div className="forget d-flex  justify-content-between my-3">
+            <button className="btn btn-success py-2 px-4" type="submit">
+              {isLoading ? (
+                <RotatingLines
+                  visible={true}
+                  height="66"
+                  width="66"
+                  strokeColor="white"
+                  color="grey"
+                  strokeWidth="3"
+                  animationDuration="0.75"
+                  ariaLabel="rotating-lines-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
+              ) : (
+                "Login"
+              )}
+            </button>
+            <Link className={LoginCss.reset} to="/forget">
+              Forget Password
+            </Link>
+          </div>
+        </form>
+      </div>
 
-        <div className="userModal"></div>
+      <div className="userModal"></div>
     </>
   );
 }
