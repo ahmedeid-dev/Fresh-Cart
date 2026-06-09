@@ -1,0 +1,31 @@
+// TODO
+
+- Add a new product to the cart
+- Add a new product to the wishlist
+- Delete a product from the cart
+- Delete a product from the wishlist
+- Increase the quantity of a product in the cart
+- Decrease the quantity of a product in the cart
+- Delete all products from the cart
+- Delete all products from the wishlist
+- Clear all products from the cart
+- Clear all products from the wishlist
+- Add a new product to the cart
+- Add a new product to the wishlist
+- Delete a product from the cart
+- Delete a product from the wishlist
+- Increase the quantity of a product in the cart
+- Decrease the quantity of a product in the cart
+- Delete all products from the cart
+- Delete all products from the wishlist
+- Clear all products from the cart
+- Clear all products from the wishlist
+- Add a new product to the cart
+- Add a new product to the wishlist
+- Delete a product from the cart
+- Delete a product from the wishlist
+- Increase the quantity of a product in the cart
+- Decrease the quantity of a product in the cart
+- Delete all products from the cart
+- Delete all products from the wishlist
+- Clear all products from the cart  
