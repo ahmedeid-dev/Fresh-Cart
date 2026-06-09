@@ -1,5 +1,5 @@
-import React, { createContext,  useEffect, useState } from "react";
 import axios from "axios";
+import { createContext, useEffect, useState } from "react";
 export const cartAuthContext = createContext();
 
 export default function CartAuthProvider({ children }) {
@@ -13,28 +13,28 @@ export default function CartAuthProvider({ children }) {
   // cart owner is for all orders
   const [cartOwner, setCartOwner] = useState(null);
   const [products, setProducts] = useState(null);
-  const [productWishIds, setproductWishIds] = useState([]);
-  const productWishIdsArry = [];
+  const [productWishIds, setProductWishIds] = useState([]);
+  const productWishIdsArray = [];
 
-  useEffect(()=>{
-    if(localStorage.getItem('token')!=null){
+  useEffect(() => {
+    if (localStorage.getItem('token') != null) {
       getProductDetails();
       getLoggedUserWishlist()
       if (products == null) {
         setProducts([])
       }
-  }
-    },[])
-
-    function setNewData(res){
-      let result = res?.data;
-      setProducts(result.data.products);
-      setNumOfCartItems(result.numOfCartItems);
-      setTotalCartPrice(result.data.totalCartPrice);
-      setCartId(result.data._id);
-      setCartOwner(result.data.cartOwner)
-      sessionStorage.setItem('ordersId',result.data.cartOwner)
     }
+  }, []);
+
+  function setNewData(res) {
+    let result = res?.data;
+    setProducts(result.data.products);
+    setNumOfCartItems(result.numOfCartItems);
+    setTotalCartPrice(result.data.totalCartPrice);
+    setCartId(result.data._id);
+    setCartOwner(result.data.cartOwner)
+    sessionStorage.setItem('ordersId', result.data.cartOwner)
+  }
   async function getProductDetails() {
     await axios
       .get(`https://ecommerce.routemisr.com/api/v1/cart`, {
@@ -44,7 +44,7 @@ export default function CartAuthProvider({ children }) {
       })
       .then((res) => {
         // console.log("getproductdetails okay...", res,);
-        
+
         setNewData(res);
       })
       .catch((err) => {
@@ -54,11 +54,11 @@ export default function CartAuthProvider({ children }) {
 
   async function addToCart(productId) {
     // console.log("addToCartproductId",productId);
-    const result =  await axios.post(`https://ecommerce.routemisr.com/api/v1/cart`,
-    {
-      "productId": productId
-    }
-    , {
+    const result = await axios.post(`https://ecommerce.routemisr.com/api/v1/cart`,
+      {
+        "productId": productId
+      }
+      , {
         headers: {
           token: localStorage.getItem("token"),
         },
@@ -72,19 +72,21 @@ export default function CartAuthProvider({ children }) {
         // console.log("addToCartError", err);
         return false
       });
-      return result
+    return result
   }
 
-  async function updateCartProductQuantity(productId,newCount){
-    const result= await axios.put(`https://ecommerce.routemisr.com/api/v1/cart/${productId}`,{
+  async function updateCartProductQuantity(productId, newCount) {
+    const result = await axios.put(`https://ecommerce.routemisr.com/api/v1/cart/${productId}`, {
       count: newCount
-    },{headers:{
-      token:localStorage.getItem("token")
-    }}).then((res)=>{
+    }, {
+      headers: {
+        token: localStorage.getItem("token")
+      }
+    }).then((res) => {
       // console.log("updated Data",res);
       setNewData(res);
       return true
-    }).catch((err)=>{
+    }).catch((err) => {
       // console.log("Updated error...",err);
       return false
     })
@@ -92,23 +94,27 @@ export default function CartAuthProvider({ children }) {
   }
 
 
-  async function deleteCartProduct(productId){
-    const result= await axios.delete(`https://ecommerce.routemisr.com/api/v1/cart/${productId}`,{headers:{
-      token:localStorage.getItem("token")
-    }}).then((res)=>{
-      console.log("new After Deleting Data",res);
+  async function deleteCartProduct(productId) {
+    const result = await axios.delete(`https://ecommerce.routemisr.com/api/v1/cart/${productId}`, {
+      headers: {
+        token: localStorage.getItem("token")
+      }
+    }).then((res) => {
+      console.log("new After Deleting Data", res);
       setNewData(res);
       return true
-    }).catch((err)=>{
-      console.log("new After Deleting error...",err);
+    }).catch((err) => {
+      console.log("new After Deleting error...", err);
       return false
     })
     return result
   }
-  async function deleteAllCartProduct(){
-    const result= await axios.delete(`https://ecommerce.routemisr.com/api/v1/cart`,{headers:{
-      token:localStorage.getItem("token")
-    }}).then((res)=>{
+  async function deleteAllCartProduct() {
+    const result = await axios.delete(`https://ecommerce.routemisr.com/api/v1/cart`, {
+      headers: {
+        token: localStorage.getItem("token")
+      }
+    }).then((res) => {
       // console.log("new After all Deleting Data",res);
       // getProductDetails()
       setProducts([]);
@@ -116,30 +122,33 @@ export default function CartAuthProvider({ children }) {
       setTotalCartPrice(0);
       setCartId(null);
       return true
-    }).catch((err)=>{
+    }).catch((err) => {
       // console.log("new After all Deleting error...",err);
       return false
     })
     return result
   }
-  async function getLoggedUserWishlist(){
-    await axios.get(`https://ecommerce.routemisr.com/api/v1/wishlist`,{headers:{
-      token:localStorage.getItem("token")
-    }})
-    .then((res)=>{
-      // console.log("data when click on wishlist", res.data.data);
-      setWishListItems(res.data.data)
-      setNumOfWishListItems(res.data.data.length)
-      setproductWishIds([])
-      for(let i =  0 ; i < res.data.data.length ; i++) {
-        productWishIdsArry.push(res.data.data[i].id);
-        setproductWishIds(productWishIdsArry)
-    }
-      // return true
-    }).catch((err)=>{
-      // console.log("error after click wishlist",err);
-      // return false
+  async function getLoggedUserWishlist() {
+    await axios.get(`https://ecommerce.routemisr.com/api/v1/wishlist`, {
+      headers: {
+        token: localStorage.getItem("token")
+      }
     })
+      .then((res) => {
+        // console.log("data when click on wishlist", res.data.data);
+        setWishListItems(res.data.data)
+        setNumOfWishListItems(res.data.data.length)
+        // const newWishIds = res.data.data.map(item => item.id);
+        setProductWishIds([])
+        for (let i = 0; i < res.data.data.length; i++) {
+          productWishIdsArray.push(res.data.data[i].id);
+          setProductWishIds(productWishIdsArray)
+        }
+        // return true
+      }).catch((err) => {
+        // console.log("error after click wishlist",err);
+        // return false
+      })
   }
 
   function addToWishlist(productId) {
@@ -153,37 +162,37 @@ export default function CartAuthProvider({ children }) {
           token: localStorage.getItem("token"),
         },
       }
-    ).then((res)=> {
+    ).then((res) => {
       getLoggedUserWishlist()
       // console.log("res wish",res);
     }).catch((err) => {
       // console.log("res err wish",err);
-      
+
     })
   }
 
   function deleteProduct(productId) {
-    return axios.delete(`https://ecommerce.routemisr.com/api/v1/wishlist/${productId}` , {
+    return axios.delete(`https://ecommerce.routemisr.com/api/v1/wishlist/${productId}`, {
       headers: {
-        token : localStorage.getItem('token')
+        token: localStorage.getItem('token')
       }
     })
-    .then(()=> {
-      getLoggedUserWishlist()
-    })
+      .then(() => {
+        getLoggedUserWishlist()
+      })
   }
 
-async function getAllOrders(){
-  const result= await axios.get(`https://ecommerce.routemisr.com/api/v1/orders`)
-  .then((res)=>{
-    // console.log("all data & pay",res);
-    return true
-  }).catch((err)=>{
-    // console.log("error & pay",err);
-    return false
-  })
-  return result
-}
+  async function getAllOrders() {
+    const result = await axios.get(`https://ecommerce.routemisr.com/api/v1/orders`)
+      .then((res) => {
+        // console.log("all data & pay",res);
+        return true
+      }).catch((err) => {
+        // console.log("error & pay",err);
+        return false
+      })
+    return result
+  }
 
   return (
     <cartAuthContext.Provider
