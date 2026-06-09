@@ -1,15 +1,15 @@
 // import RegisterCss from "./Register.module.css";
-import { object, ref, string } from "yup";
-import { useFormik } from "formik";
 import axios from "axios";
-import React, {  useState } from "react";
+import { useFormik } from "formik";
+import { useState } from "react";
+import { Helmet } from "react-helmet";
 import { RotatingLines } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { object, ref, string } from "yup";
 export default function Register() {
 
-  const [isSeccess, setIsSeccess] = useState(null);
-  const [errorMeaasge, setErrorMeaasge] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
   const navigate = useNavigate()
 
@@ -21,17 +21,17 @@ export default function Register() {
         userData
       );
       // console.log("in case of success ", response?.data);
-      setIsSeccess(true);
+      setIsSuccess(true);
       setTimeout(() => {
-      setIsSeccess(false);
-      navigate('/');
+        setIsSuccess(false);
+        navigate('/');
       }, 2000);
       setIsLoading(false);
     } catch (error) {
       // console.log("in case of errors ", error?.response.data.message);
-      setErrorMeaasge(error?.response.data.message);
+      setErrorMessage(error?.response.data.message);
       setTimeout(() => {
-        setErrorMeaasge(false);
+        setErrorMessage(false);
       }, 2000);
       setIsLoading(false);
     }
@@ -81,23 +81,23 @@ export default function Register() {
   });
   return (
     <>
-          <Helmet>
-    <meta charSet="utf-8" />
-    <title>Register</title>
-    {/* <link rel="canonical" href="http://mysite.com/example" /> */}
-  </Helmet>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Register</title>
+        {/* <link rel="canonical" href="http://mysite.com/example" /> */}
+      </Helmet>
       <div className="w-75 m-auto py-5">
         <h2>Register Now : </h2>
-        {isSeccess ? (
+        {isSuccess ? (
           <div className="alert alert-success text-center fw-bold h4">
             Concratulation You Have Registered Successfully
           </div>
         ) : (
           ""
         )}
-        {errorMeaasge ? (
+        {errorMessage ? (
           <div className="alert alert-danger text-center fw-bold h4">
-            {errorMeaasge}
+            {errorMessage}
           </div>
         ) : (
           ""
@@ -158,15 +158,15 @@ export default function Register() {
 
           <label htmlFor="password">password :</label>
           <div className="position-relative w-100 h-25">
-          <input
-            className="my-2 form-control passwordInput"
-            value={formik.values.password}
-            onInput={formik.handleBlur}
-            onChange={formik.handleChange}
-            id="password"
-            type="password"
-            placeholder="Enter Your Password ..."
-          />
+            <input
+              className="my-2 form-control passwordInput"
+              value={formik.values.password}
+              onInput={formik.handleBlur}
+              onChange={formik.handleChange}
+              id="password"
+              type="password"
+              placeholder="Enter Your Password ..."
+            />
           </div>
           {formik.errors.password && formik.touched.password ? (
             <div className="alert alert-danger w-100">
@@ -178,15 +178,15 @@ export default function Register() {
 
           <label htmlFor="rePassword">rePassword :</label>
           <div className="position-relative w-100 h-25">
-          <input
-            className="my-2 form-control rePasswordInput"
-            value={formik.values.rePassword}
-            onInput={formik.handleBlur}
-            onChange={formik.handleChange}
-            id="rePassword"
-            type="password"
-            placeholder="Enter Your password ..."
-          />
+            <input
+              className="my-2 form-control rePasswordInput"
+              value={formik.values.rePassword}
+              onInput={formik.handleBlur}
+              onChange={formik.handleChange}
+              id="rePassword"
+              type="password"
+              placeholder="Enter Your password ..."
+            />
           </div>
           {formik.errors.rePassword && formik.touched.rePassword ? (
             <div className="alert alert-danger w-100">
@@ -196,7 +196,7 @@ export default function Register() {
             ""
           )}
 
-          <button style={{width:"150px"}} className="btn btn-success" type="submit">
+          <button style={{ width: "150px" }} className="btn btn-success" type="submit">
             {isLoading ? (
               <RotatingLines
                 visible={true}
@@ -209,7 +209,7 @@ export default function Register() {
                 ariaLabel="rotating-lines-loading"
                 wrapperStyle={{}}
                 wrapperClass=""
-                
+
               />
             ) : (
               "Register"
